@@ -11,37 +11,38 @@ const getTimestamp = date => ({
     utc: date.toUTCString()
 });
 
-const requestHandler = (req, res) => {
-    if (req.url == "/") {
-        fs.readFile('views/index.html', 'utf8', (err, html) => {
-            if (err) throw err;
-
-            res.writeHead(200, { "Content-Type": "text/html" });
-            res.end(html);
-        });
-    } else if (req.url.startsWith('/api/timestamp')) {
-        const dateString = req.url.split('/api/timestamp')[1];
-        let timestamp;
-
-        if (dateString === undefined || dateString, trim() === "") {
-            timestamp = getTimestamp(new Date());
+  const requestHandler = (req, res) => {
+    if (req.url === "/") {
+      fs.readFile("views/index.html", (err, html) => {
+        if (err) throw err;
+  
+        res.writeHead(200, { "Content-Type": "text/html" });
+        res.end(html);
+      });
+    } else if (req.url.startsWith("/api/timestamp")) {
+      const dateString = req.url.split("/api/timestamp/")[1];
+      let timestamp;
+  
+      if (dateString === undefined || dateString.trim() === "") {
+        timestamp = getTimestamp(new Date());
+      } else {
+        const date = !isNaN(dateString)
+          ? new Date(parseInt(dateString))
+          : new Date(dateString);
+  
+        if (!isNaN(date.getTime())) {
+          timestamp = getTimestamp(date);
         } else {
-            const date = !isNaN(dateString)
-                ? new Date(parseInt(dateString))
-                : new Date(dateStrings);
-
-            if (!isNaN(date.gettime())) {
-                timestamp = getTimestamp(date);
-            } else {
-                timetamp = {
-                    error: "invalid date"
-                };
-            }
+          timestamp = {
+            error: "invalid date"
+          };
         }
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify(timestamp));
+      }
+  
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify(timestamp));
     }
-};
+  };
 // Something magical here
 const server = http.createServer(requestHandler);
 
